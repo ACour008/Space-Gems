@@ -8,4 +8,4 @@ This project is a Match-3 game that resembles classic Bejeweled. It began as a w
 
 -- If you want to see the entire source code, you can find it [here](https://github.com/ACour008/Space-Gems/tree/main/Assets/Scripts)
 
-Screenshots coming soon/
+Screenshots coming soon.
