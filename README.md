@@ -4,7 +4,7 @@
 A simple Match-3 game. It's like Bejeweled, but worse!
 
 <p>Verison: 1.0<br>
-Download game at: [https://acour008.itch.io/space-gems](https://acour008.itch.io/space-gems)</p>
+Download game at: https://acour008.itch.io/space-gems</p>
 
 ## How to play
 Click a square with a gem in it and then any neighboring square to swap space gems. If you make a match of 3 or more, you score!
