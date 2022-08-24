@@ -14,7 +14,7 @@ Click a square with a gem in it and then any neighboring square to swap space ge
 - Drag & Drop capabilities
 
 ## Music credits
-Credits for all music (in order of appearance) is found here: [shorturl.at/dmqxy](shorturl.at/dmqxy)
+Credits for all music (in order of appearance) is found here: https://shorturl.at/dmqxy
 
 
 
