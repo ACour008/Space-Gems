@@ -24,6 +24,11 @@ namespace MiiskoWiiyaas.Grid
 
         private void ShuffleButton_OnClicked(object sender, EventArgs e) => Shuffle();
 
+        /// <summary>
+        /// Sets up the GridReshuffler
+        /// </summary>
+        /// <param name="grid">The main Game Grid that will be shuffled when instructed to do so.</param>
+        /// <param name="matchChecker">The MatchChecker object that is responsible to see if potential matches exist.</param>
         public void Initialize(GameGrid<GemCell> grid, MatchChecker matchChecker)
         {
             shufflesLeft = maxShuffles;
@@ -50,10 +55,13 @@ namespace MiiskoWiiyaas.Grid
             }
         }
 
+        /// <summary>
+        /// Shuffles the grid.
+        /// </summary>
         public void Shuffle()
         {
             if (shufflesLeft == 0) return;
-            shuffleSFXClip.Play();
+            shuffleSFXClip.PlayOneShot();
             DoShuffle();
             shufflesLeft--;
         }

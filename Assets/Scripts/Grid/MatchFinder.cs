@@ -7,12 +7,17 @@ using MiiskoWiiyaas.Audio;
 
 namespace MiiskoWiiyaas.Core
 {
+    /// <summary>
+    /// Checks for matches of 3 or more after a swap has occurred. Not to be
+    /// confused with MatchChecker which checks for potential matches without
+    /// triggering move animations.
+    /// </summary>
     public class MatchFinder : MonoBehaviour
     {
         private GameGrid<GemCell> grid;
         
         private HashSet<Gem> matches;
-        private int matchCount = 1;
+        private int numMatchesInCurrentTurn = 1;
         private MatchSFXType sfxType;
 
         public bool HasPotentialMatches { get => true; }
@@ -21,6 +26,34 @@ namespace MiiskoWiiyaas.Core
         public event EventHandler OnSequenceDone;
         public event EventHandler<SFXEventArgs> OnPlayMatchSFX;
 
+        private void AddNextCellsToResults(int index, bool searchCols, GemCell currentCell, List<Gem> results)
+        {
+            int x = index % grid.Rows;
+            int y = index / grid.Rows;
+            int startAxis = searchCols ? y : x;
+
+            for (int i = startAxis + 1; i < grid.Rows; i++)
+            {
+                int nextIndex = (searchCols) ? x + grid.Rows * i : i + grid.Rows * y;
+
+                GemCell next = grid.Cells[nextIndex];
+                if (next.CurrentGem == null) break;
+
+                bool nextMatchesWithCurrentGem = next.CurrentGem.Color == currentCell.CurrentGem.Color;
+                if (!nextMatchesWithCurrentGem) break;
+
+                results.Add(next.CurrentGem);
+            }
+        }
+
+        /// <summary>
+        /// Finds all matches of 3 or more in a grid.
+        /// </summary>
+        /// <param name="selected">An array containing the GemCells that will swap Gems</param>
+        /// <param name="firstSearch">A bool indicating whether the match-finding process
+        /// is on its first iteration or is looking for subsequent matches that may have occured
+        /// when the first set of matches disappeared and the grid was refilled.</param>
+        /// <returns>A bool that indicates whether any matches were found.</returns>
         public bool FindAllMatches(GemCell[] selected, bool firstSearch)
         {
             matches.Clear();
@@ -39,67 +72,48 @@ namespace MiiskoWiiyaas.Core
             bool matchesFound = matches.Count > 0;
             if (matchesFound)
             {
-                OnPlayMatchSFX?.Invoke(this, new SFXEventArgs { matchCount = this.matchCount, sfxType = this.sfxType });
+                OnPlayMatchSFX?.Invoke(this, new SFXEventArgs { matchCount = this.numMatchesInCurrentTurn, sfxType = this.sfxType });
                 OnSequenceDone?.Invoke(this, EventArgs.Empty);
-                matchCount = (matchCount + 1) % 6;
+                numMatchesInCurrentTurn = (numMatchesInCurrentTurn + 1) % 6;
             } 
             else
             {
-                matchCount = 1;
+                numMatchesInCurrentTurn = 1;
             }
 
             return matchesFound;
         }
 
-        private List<Gem> FindColMatches(GemCell gemCell, int index)
+        private List<Gem> FindColMatches(GemCell currentCell, int index)
         {
             List<Gem> results = new List<Gem>();
 
-            if (gemCell.CurrentGem != null)
+            if (currentCell.CurrentGem != null)
             {
-                results.Add(gemCell.CurrentGem);
-
-                for (int i = index + 8; i < grid.Cells.Length; i += 8)
-                {
-                    GemCell next = grid.Cells[i];
-                    if (next.CurrentGem == null) break;
-
-                    bool nextMatchesWithCurrent = next.CurrentGem.Color == gemCell.CurrentGem.Color;
-
-                    if (!nextMatchesWithCurrent) break;
-                    results.Add(next.CurrentGem);
-                }
+                results.Add(currentCell.CurrentGem);
+                AddNextCellsToResults(index, true, currentCell, results);
             }
 
             return results;
         }
 
-        private List<Gem> FindRowMatches(GemCell gemCell, int index)
+        private List<Gem> FindRowMatches(GemCell currentCell, int index)
         {
             List<Gem> results = new List<Gem>();
 
-            if (gemCell.CurrentGem != null)
+            if (currentCell.CurrentGem != null)
             {
-                results.Add(gemCell.CurrentGem);
-
-                int x = index % grid.Rows;
-                int y = index / grid.Rows;
-
-                for (int i = x + 1; i < grid.Cols; i++)
-                {
-                    GemCell next = grid.Cells[i + grid.Rows * y];
-                    if (next.CurrentGem == null) break;
-
-                    bool nextMatchesWithCurrent = next.CurrentGem.Color == gemCell.CurrentGem.Color;
-
-                    if (!nextMatchesWithCurrent) break;
-                    results.Add(next.CurrentGem);
-                }
+                results.Add(currentCell.CurrentGem);
+                AddNextCellsToResults(index, false, currentCell, results);
             }
 
             return results;
         }
 
+        /// <summary>
+        /// Sets up the MatchFinder object
+        /// </summary>
+        /// <param name="grid">The main Game Grid.</param>
         public void Initialize(GameGrid<GemCell> grid)
         {
             this.grid = grid;
@@ -127,6 +141,7 @@ namespace MiiskoWiiyaas.Core
             }
         }
 
+        // TODO: rethink logic. Sometimes it does not play correct SFX.
         private void DetermineSFX(List<Gem> matchList)
         {
             if (MatchContainsType(matchList, MatchSFXType.BOMB))

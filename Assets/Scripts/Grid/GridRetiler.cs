@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using MiiskoWiiyaas.Grid;
 using MiiskoWiiyaas.Builders;
-using MiiskoWiiyaas.Core.Events;
 
 namespace MiiskoWiiyaas.Core
 {
@@ -16,12 +15,24 @@ namespace MiiskoWiiyaas.Core
         public event EventHandler OnGridRetiled;
         public event EventHandler<Events.SFXEventArgs> OnGemMovedToPosition;
 
-        public void Initialize(GameGrid<GemCell> grid, GameObject builderPrefab)
+        /// <summary>
+        /// Sets up the GridRetiler.
+        /// </summary>
+        /// <param name="grid">The game grid to be retiled when instructed to do so.</param>
+        /// <param name="gridCellPrefab">The prefab GameObject for the grid cell. Is passed along to the GemBuilder.</param>
+        /// <seealso cref="GemBuilder"/>
+        public void Initialize(GameGrid<GemCell> grid, GameObject gridCellPrefab)
         {
             this.grid = grid;
-            this.gemBuilder = new GemBuilder(builderPrefab, grid.Rows);
+            this.gemBuilder = new GemBuilder(gridCellPrefab, grid.Rows);
         }
 
+        /// <summary>
+        /// Instantiates a new Power Gem for the cell of the given index.
+        /// </summary>
+        /// <param name="index">The index position of the array holding all grid cells.</param>
+        /// <param name="gemColor">A specified color within the GemColor enum.</param>
+        /// <seealso cref="GemColor"/>
         public void AddPowerGemAt(int index, GemColor gemColor)
         {
             GemCell cell = grid.Cells[index];
@@ -29,6 +40,10 @@ namespace MiiskoWiiyaas.Core
             cell.CurrentGem = powerGem;
         }
 
+        /// <summary>
+        /// Refills the Grid with a procedurally generated (ie., semi-randomized) layout.
+        /// </summary>
+        /// <param name="startDelaySeconds">How long in seconds until the grid is refilled.</param>
         public void RefillGrid(float startDelaySeconds)
         {
             StopAllCoroutines();
@@ -58,6 +73,11 @@ namespace MiiskoWiiyaas.Core
             OnGridRetiled?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Refills the Grid with a given layout as determined by the given GemColor array.
+        /// </summary>
+        /// <param name="layout">An array of GemColors that determines the color of the gem in each cell.</param>
+        /// <param name="startDelaySeconds">How long in seconds until the Grid is refilled.</param>
         public void RefillGridWithLayout(GemColor[] layout, float startDelaySeconds)
         {
             StopAllCoroutines();

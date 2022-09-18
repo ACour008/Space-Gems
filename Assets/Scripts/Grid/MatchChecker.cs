@@ -4,6 +4,10 @@ using MiiskoWiiyaas.Grid;
 
 namespace MiiskoWiiyaas.Core
 {
+    /// <summary>
+    /// Checks for potential matches in the grid without triggering move animations.
+    /// Not to be confused with MatchFinder which checks for matches after a swap has occurred.
+    /// </summary>
     public class MatchChecker: MonoBehaviour
     {
         private GameGrid<GemCell> grid;
@@ -11,6 +15,10 @@ namespace MiiskoWiiyaas.Core
 
         public bool PotentialMatchesExist { get => CheckPotentialMatches(); }
 
+        /// <summary>
+        /// Sets up the MatchFinder
+        /// </summary>
+        /// <param name="grid">The main game grid</param>
         public void Initialize(GameGrid<GemCell> grid)
         {
             this.grid = grid;
@@ -90,18 +98,25 @@ namespace MiiskoWiiyaas.Core
             return false;
         }
 
-        public bool SwitchWouldCauseMatch(GemCell cell1, GemCell cell2)
+        /// <summary>
+        /// Checks to see if swaping the given cells would cause a match without
+        /// activating swap animations.
+        /// </summary>
+        /// <param name="cell">The cell that exchanges its data with the other cell to see if a match would occur.</param>
+        /// <param name="otherCell">The other cell that gets exchanged with the first cell.</param>
+        /// <returns>A boolean indicating whether a swapping of cells would cause a match.</returns>
+        public bool SwitchWouldCauseMatch(GemCell cell, GemCell otherCell)
         {
             bool result = false;
 
-            switcher.ExchangeGems(cell1, cell2);
+            switcher.ExchangeGems(cell, otherCell);
 
-            if (FindMatchAtCell(cell1) || FindMatchAtCell(cell2))
+            if (FindMatchAtCell(cell) || FindMatchAtCell(otherCell))
             {
                 result = true;
             }
 
-            switcher.ExchangeGems(cell1, cell2);
+            switcher.ExchangeGems(cell, otherCell);
 
             return result;
         }

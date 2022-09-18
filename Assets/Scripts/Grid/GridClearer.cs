@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using MiiskoWiiyaas.Grid;
 
@@ -10,6 +9,9 @@ namespace MiiskoWiiyaas.Core
         [SerializeField] Vector3 destroyPoint;
         private GameGrid<GemCell> grid;
 
+        /// <summary>
+        /// Clears the grid.
+        /// </summary>
         public void Clear()
         {
             StartCoroutine(DoClear());
@@ -45,6 +47,10 @@ namespace MiiskoWiiyaas.Core
             return disappearRunTime;
         }
 
+        /// <summary>
+        /// Sets up the GridClearer
+        /// </summary>
+        /// <param name="grid">The game grid to be cleared when instructed to do so.</param>
         public void Initialize(GameGrid<GemCell> grid)
         {
             this.grid = grid;
