@@ -48,7 +48,7 @@ namespace MiiskoWiiyaas.Builders
             SpriteRenderer spriteRenderer = instance.GetComponent<SpriteRenderer>();
             GemCell gemCell = instance.GetComponent<GemCell>();
 
-            gemCell.Init(id);
+            gemCell.SetCellId(id);
             SetNeighbors(gemCell, cells);
 
             float blackOrWhite = (id + colorOffset) % 2;
@@ -65,9 +65,9 @@ namespace MiiskoWiiyaas.Builders
         /// <param name="id">The id of the cell.</param>
         /// <param name="xPosition">The x coordinate of cell within the game grid.</param>
         /// <param name="yPosition">The y coorindate of cell within the game grid.</param>
-        /// <param name="parent">The transform object of the game grid.</param>
-        /// <param name="cells">An array that represents the game grid.</param>
-        /// <param name="layout">An array that holds the grid layout data. </param>
+        /// <param name="parent">The parent transform that the GemCell will become a child of.</param>
+        /// <param name="cells">An array that holds all grid cells.</param>
+        /// <param name="layout">An array of GemColors that determines the color of the gem in each cell. </param>
         /// <returns>A GemCell object with a specified color from the <c>layout</c> array. </returns>
         public GemCell BuildFromLayout(int id, float xPosition, float yPosition, Transform parent, GemCell[] cells, GemColor[] layout)
         {
@@ -82,7 +82,7 @@ namespace MiiskoWiiyaas.Builders
             SpriteRenderer spriteRenderer = instance.GetComponent<SpriteRenderer>();
             GemCell gemCell = instance.GetComponent<GemCell>();
 
-            gemCell.Init(id);
+            gemCell.SetCellId(id);
             SetNeighbors(gemCell, cells);
 
             float blackOrWhite = (id + colorOffset) % 2;

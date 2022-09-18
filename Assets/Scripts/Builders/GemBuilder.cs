@@ -21,15 +21,7 @@ namespace MiiskoWiiyaas.Builders
             gemSelector = new GemSelector(new System.Random());
         }
 
-        /// <summary>
-        /// Builds all the components for a Gem object and assigns it to a cell within the game grid.
-        /// </summary>
-        /// <param name="id">The id of the cell assigned to the Gem.</param>
-        /// <param name="xPosition">The x coordinate of the Gem's cell.</param>
-        /// <param name="yPosition">The y coorindate of the Gem's cell.</param>
-        /// <param name="parent">The transform object of the cell.</param>
-        /// <param name="cells">An array of all GemCells that belongs to the game grid.</param>
-        /// <returns>A Gem object with a generated color</returns>
+        /// <inheritdoc cref="GemCellBuilder.Build(int, float, float, Transform, GemCell[])"/>
         public Gem Build(int id, float xPosition, float yPosition, Transform parent, GemCell[] cells)
         {
             GameObject instance = GameObject.Instantiate<GameObject>(prefab, parent);
@@ -48,17 +40,7 @@ namespace MiiskoWiiyaas.Builders
             return newGem;
         }
 
-        /// <summary>
-        /// Builds all the components for a Gem object and assigns it to a cell within the game
-        /// grid based on a color layout.
-        /// </summary>
-        /// <param name="id">The id of the cell assigned to the Gem.</param>
-        /// <param name="xPosition">The x coordinate of the Gem's cell.</param>
-        /// <param name="yPosition">The y coordinate of the Gem's cell.</param>
-        /// <param name="parent">The transform object of the cell.</param>
-        /// <param name="cells">An array that represents the game grid.</param>
-        /// <param name="gemColorGrid">An array that holds the grid layout data.</param>
-        /// <returns>A Gem object with a specified color from the <c>gameColorGrid</c> array.</returns>
+        /// <inheritdoc cref="GemCellBuilder.BuildFromLayout(int, float, float, Transform, GemCell[], GemColor[])"/>
         public Gem BuildFromLayout(int id, float xPosition, float yPosition, Transform parent, GemCell[] cells, GemColor[] gemColorGrid)
         {
             GameObject instance = GameObject.Instantiate<GameObject>(prefab, parent);

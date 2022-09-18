@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace MiiskoWiiyaas.Core
 {
+    /// <inheritdoc cref="GemAnimator"/>
     public class Gem : MonoBehaviour
     {
         [SerializeField] protected Sprite[] sprites;
@@ -27,23 +28,13 @@ namespace MiiskoWiiyaas.Core
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        /// <summary>
-        /// Activates the animation that removes Gem from the game grid.
-        /// </summary>
-        /// <param name="currentCell">The cell that the gem is associated with.</param>
-        /// <param name="selfOnly">For power gems. If selfOnly is true, only the Gem will disappear,
-        /// otherwise its neighbors will disappear as well, according to the type of GemAnimator.</param>
-        /// <returns>The animation runtime in seconds.</returns>
+        /// <inheritdoc cref="GemAnimator.Disappear(GemCell, bool)"/>
         public float Disappear(GemCell currentCell, bool selfOnly = true)
         {
             return gemAnimator.Disappear(currentCell, selfOnly);
         }
 
-        /// <summary>
-        /// Moves the gem to a specified position.
-        /// </summary>
-        /// <param name="targetPosition">The target position the gem should move to.</param>
-        /// <returns>The animation runtime in seconds.</returns>
+        /// <inheritdoc cref="GemAnimator.Move(Vector3)"/>
         public float Move(Vector3 targetPosition)
         {
             return gemAnimator.Move(targetPosition);
