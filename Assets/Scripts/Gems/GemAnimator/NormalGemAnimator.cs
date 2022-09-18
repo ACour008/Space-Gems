@@ -3,9 +3,14 @@ using Tweens;
 using MiiskoWiiyaas.Utils;
 using MiiskoWiiyaas.Core;
 
+
 public class NormalGemAnimator : GemAnimator
 {
 
+    /// <summary>
+    /// A constructor for NormalGemAnimator that is meant for non-power Gems.
+    /// </summary>
+    /// <param name="gem">The Gem associated with the GemAnimator</param>
     public NormalGemAnimator(Gem gem)
     {
         this.gem = gem;
@@ -15,6 +20,13 @@ public class NormalGemAnimator : GemAnimator
         effectBuilder.OnExecutionCompleted += (_, _) => animationCompleted = true;
     }
 
+    /// <summary>
+    /// Removes the gem from the game grid.
+    /// </summary>
+    /// <param name="currentCell">The cell that the gem is associated with.</param>
+    /// <param name="selfOnly">For power gems. If selfOnly is true, only the Gem will disappear,
+    /// otherwise its neighbors will disappear as well, according to the type of GemAnimator.</param>
+    /// <returns></returns>
     public override float Disappear(GemCell currentCell, bool selfOnly = true)
     {
         effectBuilder.ClearAllEffects();

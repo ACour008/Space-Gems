@@ -3,9 +3,17 @@ using MiiskoWiiyaas.Core;
 using MiiskoWiiyaas.Utils;
 using Tweens;
 
+/// <summary>
+/// A subclass of GemAnimator that controls the movement of an Electric Power Gem.
+/// </summary>
+/// <seealso cref="GemAnimator"/>
 public class ElectricGemAnimator : GemAnimator
 {
 
+    /// <summary>
+    /// The constructor of ElectricGemAnimator
+    /// </summary>
+    /// <param name="gem">The gem associated with the Animator</param>
     public ElectricGemAnimator(Gem gem)
     {
         this.gem = gem;
@@ -15,6 +23,12 @@ public class ElectricGemAnimator : GemAnimator
         effectBuilder.OnExecutionCompleted += (_, _) => animationCompleted = true;
     }
 
+    /// <summary>
+    /// Removes the Gem associated with the Animator from the game grid.
+    /// </summary>
+    /// <param name="currentCell">The GemCell object associated with the cell to disappear.</param>
+    /// <param name="selfOnly">For power gems. If selfOnly is true, only the Gem will disappear,
+    /// otherwise its neighbors will disappear as well, according to the type of GemAnimator.</param>
     public override float Disappear(GemCell currentCell, bool selfOnly = true)
     {
         float runTime = DisappearSelf();

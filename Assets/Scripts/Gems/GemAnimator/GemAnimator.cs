@@ -12,8 +12,20 @@ public abstract class GemAnimator
 
     public Gem Gem { get => gem; }
 
+    /// <summary>
+    /// An abstract function designed to make the current gem disappear from the game grid.
+    /// </summary>
+    /// <param name="currentCell">The cell that the gem is associated with.</param>
+    /// <param name="selfOnly">For power gems. If selfOnly is true, only the Gem will disappear,
+    /// otherwise its neighbors will disappear as well, according to the type of GemAnimator.</param>
+    /// <returns>The animation runtime in seconds.</returns>
     public abstract float Disappear(GemCell currentCell, bool selfOnly);
 
+    /// <summary>
+    /// Moves the gem to a specified position
+    /// </summary>
+    /// <param name="targetPosition">The position that the gem should move to.</param>
+    /// <returns>The animation runtime in seconds.</returns>
     public float Move(Vector3 targetPosition)
     {
         effectBuilder.ClearAllEffects();
