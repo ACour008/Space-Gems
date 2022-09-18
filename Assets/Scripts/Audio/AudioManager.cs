@@ -7,7 +7,6 @@ namespace MiiskoWiiyaas.Audio
 {
     public class AudioManager : MonoBehaviour
     {
-
         [SerializeField] float musicStartValue;
         [SerializeField] float sfxStartValue;
         [SerializeField] SliderHandler musicSliderHandler;
@@ -15,7 +14,7 @@ namespace MiiskoWiiyaas.Audio
         [SerializeField] string musicVcaName;
         [SerializeField] string sfxVcaName;
         [SerializeField] EventReference musicPlaylist;
-        
+
         MusicPlayer musicPlayer;
 
         private static VCA MusicVCA;
@@ -23,6 +22,8 @@ namespace MiiskoWiiyaas.Audio
         private static SliderHandler MusicUISlider;
         private static SliderHandler SfxUISlider;
         private static bool initialized = false;
+
+        #region Initialization
 
         private void CheckInitialization()
         {
@@ -47,8 +48,60 @@ namespace MiiskoWiiyaas.Audio
             AudioManager.SfxUISlider.SetValue(sfxSliderValue);
         }
 
+        // If the static variables of AudioManager has already initialized:
+        // Assigns the values of the previous scene's Music and SFX UI Sliders to
+        // musicSliderValue and sfxSliderValue BEFORE assigning the current scene's
+        // UI Sliders & VCAs.
+        // This helps to sharing sound settings across scenes.
+        private void SetUISlidersPostInit(out float musicSliderValue, out float sfxSliderValue)
+        {
+            musicSliderValue = AudioManager.MusicUISlider.SliderValue;
+            sfxSliderValue = AudioManager.SfxUISlider.SliderValue;
+
+            AudioManager.MusicUISlider = musicSliderHandler;
+            AudioManager.SfxUISlider = sfxSliderHandler;
+
+            AudioManager.MusicUISlider.VCAFader = AudioManager.MusicVCA;
+            AudioManager.SfxUISlider.VCAFader = AudioManager.SfxVCA;
+        }
+
+        // If the static variables of AudioManager has NOT been initialized:
+        // AudioManager gets the current scene's Music & SFX UI Sliders to
+        // assign their values to musicSliderValue & sfxSliderValue.
+        // This helps to share sound settings across scenes.
+        private void SetUISlidersPreInit(out float musicSliderValue, out float sfxSliderValue)
+        {
+            AudioManager.MusicUISlider = musicSliderHandler;
+            AudioManager.SfxUISlider = sfxSliderHandler;
+
+            AudioManager.MusicUISlider.VCAFader = AudioManager.MusicVCA;
+            AudioManager.SfxUISlider.VCAFader = AudioManager.SfxVCA;
+
+            musicSliderValue = musicStartValue;
+            sfxSliderValue = sfxStartValue;
+        }
+
+        private void SetVCAs()
+        {
+            AudioManager.MusicVCA = RuntimeManager.GetVCA($"vca:/{musicVcaName}");
+            AudioManager.SfxVCA = RuntimeManager.GetVCA($"vca:/{sfxVcaName}");
+        }
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Stops the music player when the game changes a level.
+        /// </summary>
+        /// <param name="sender">The object that invoked the event.</param>
+        /// <param name="e">An empty EventArgs object.</param>
         public void LevelManager_OnLevelChange(object sender, EventArgs e) => musicPlayer.Stop();
 
+        /// <summary>
+        /// Gets the music player's next track and plays it.
+        /// </summary>
+        /// <param name="sender">The object that invoked the event.</param>
+        /// <param name="e">An empty EventArgs object</param>
         public void LevelManager_OnLevelChangeCompleted(object sender, EventArgs e)
         {
             musicPlayer.NextTrack();
@@ -67,36 +120,8 @@ namespace MiiskoWiiyaas.Audio
 
             musicPlayer.Play();
         }
+        #endregion
 
-        private void SetUISlidersPostInit(out float musicValue, out float sfxValue)
-        {
-            musicValue = AudioManager.MusicUISlider.SliderValue;
-            sfxValue = AudioManager.SfxUISlider.SliderValue;
-
-            AudioManager.MusicUISlider = musicSliderHandler;
-            AudioManager.SfxUISlider = sfxSliderHandler;
-
-            AudioManager.MusicUISlider.VCAFader = AudioManager.MusicVCA;
-            AudioManager.SfxUISlider.VCAFader = AudioManager.SfxVCA;
-        }
-
-        private void SetUISlidersPreInit(out float musicValue, out float sfxValue)
-        {
-            AudioManager.MusicUISlider = musicSliderHandler;
-            AudioManager.SfxUISlider = sfxSliderHandler;
-
-            AudioManager.MusicUISlider.VCAFader = AudioManager.MusicVCA;
-            AudioManager.SfxUISlider.VCAFader = AudioManager.SfxVCA;
-
-            musicValue = musicStartValue;
-            sfxValue = sfxStartValue;
-        }
-
-        private void SetVCAs()
-        {
-            AudioManager.MusicVCA = RuntimeManager.GetVCA($"vca:/{musicVcaName}");
-            AudioManager.SfxVCA = RuntimeManager.GetVCA($"vca:/{sfxVcaName}");
-        }
     }
 
 }

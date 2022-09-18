@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-namespace MiiskoWiiyaas.Audio
+﻿namespace MiiskoWiiyaas.Audio
 {
     public enum MatchSFXType
     {

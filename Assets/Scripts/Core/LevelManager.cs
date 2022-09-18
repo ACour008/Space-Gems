@@ -10,8 +10,8 @@ namespace MiiskoWiiyaas.Core
 {
     public class LevelManager : MonoBehaviour
     {
-        [SerializeField] private int targetLevelTurns;
-        [SerializeField] private int targetLevelIncreaseBy;
+        [SerializeField] private int turnsPerLevel = 12;
+        [SerializeField] private int turnsPerLevelIncrease = 3;
         [SerializeField] private LevelCompleteUI levelCompleteUI;
         [SerializeField] private LevelCounterUI levelCounterUI;
         [SerializeField] private int turnCount = 0;
@@ -29,11 +29,6 @@ namespace MiiskoWiiyaas.Core
         public event EventHandler OnLevelChange;
         public event EventHandler<LevelManagerEventArgs> OnLevelChangeCompleted;
 
-        public void GotoNextLevel()
-        {
-            StartCoroutine(ChangeToNextLevel());
-        }
-
         private IEnumerator ChangeToNextLevel()
         {
             gameGrid.SetCellsAsSelectable(false);
@@ -48,12 +43,12 @@ namespace MiiskoWiiyaas.Core
             levelCounterUI.SetLevelText(++currentLevel);
             levelCounterUI.SetProgressBar(0);
 
-            targetLevelTurns += targetLevelIncreaseBy;
+            turnsPerLevel += turnsPerLevelIncrease;
             gridRetiler.RefillGrid(0.5f);
             turnCount = 0;
 
             yield return new WaitForSeconds(0.5f);
-            gameTracker.UpdateData();
+            gameTracker.CacheData();
             gameGrid.SetCellsAsSelectable(true);
 
             OnLevelChangeCompleted?.Invoke(this, new LevelManagerEventArgs() { isALevelRestart = false });
@@ -72,12 +67,12 @@ namespace MiiskoWiiyaas.Core
             levelCounterUI.SetLevelText(1);
             levelCounterUI.SetProgressBar(0);
 
-            targetLevelTurns = initialTargetLevelTurns;
+            turnsPerLevel = initialTargetLevelTurns;
             gridRetiler.RefillGrid(0.5f);
             turnCount = 0;
 
             yield return new WaitForSeconds(0.5f);
-            gameTracker.UpdateData();
+            gameTracker.CacheData();
             gameGrid.SetCellsAsSelectable(true);
 
             OnLevelChangeCompleted?.Invoke(this, new LevelManagerEventArgs() { isALevelRestart = true });
@@ -85,6 +80,21 @@ namespace MiiskoWiiyaas.Core
 
         private void GameOverUIMenuToggler_OnCancelButtonClicked(object sender, EventArgs e) => StartCoroutine(ChangeToFirstLevel());
 
+        /// <summary>
+        /// Changes the level by clearing and creating a new grid layout and increases the target for the number of turns/level.
+        /// </summary>
+        public void GotoNextLevel()
+        {
+            StartCoroutine(ChangeToNextLevel());
+        }
+
+        /// <summary>
+        /// Sets up the LevelManager
+        /// </summary>
+        /// <param name="grid">The main game grid object.</param>
+        /// <param name="clearer">The object responsibile for clearing the grid.</param>
+        /// <param name="retiler">The object responsible for retiling the grid after it has been cleared.</param>
+        /// <param name="tracker">The object responsibile for tracking the game's current score and grid layout.</param>
         public void Initialize(GameGrid<GemCell> grid, GridClearer clearer, GridRetiler retiler, GameTracker tracker)
         {
             gameGrid = grid;
@@ -98,28 +108,44 @@ namespace MiiskoWiiyaas.Core
 
             restartButton.OnClicked += RestartButton_OnRestartButtonClicked;
             gameOverUIMenuToggler.OnCancelButtonClicked += GameOverUIMenuToggler_OnCancelButtonClicked;
-            initialTargetLevelTurns = targetLevelTurns;
+            initialTargetLevelTurns = turnsPerLevel;
         }
 
+        /// <summary>
+        /// An event method that checks to see if the level needs changing after
+        /// the match-finding process is complete.
+        /// </summary>
+        /// <param name="sender">The InputHandler object that invoked the event.</param>
+        /// <param name="eventArgs">An empty EventArgs object</param>
+        /// <seealso cref="InputHandler"/>
+        /// <seealso cref="MatchFinder"/>
         public void InputHandler_OnMatchFindingDone(object sender, EventArgs eventArgs)
         {
             turnCount++;
 
-            float value = (float)turnCount / (float)targetLevelTurns;
+            float value = (float)turnCount / (float)turnsPerLevel;
 
             levelCounterUI.SetProgressBar(value);
 
-            if (turnCount == targetLevelTurns)
+            if (turnCount == turnsPerLevel)
             {
                 StartCoroutine(ChangeToNextLevel());
             }
         }
 
+        /// <summary>
+        /// An event method that restarts the level.
+        /// </summary>
+        /// <param name="sender">The restart button object that invoked the event</param>
+        /// <param name="e">An empty EventArgs object.</param>
         private void RestartButton_OnRestartButtonClicked(object sender, EventArgs e) => RestartLevel();
 
+        /// <summary>
+        /// Restarts the level to initial settings, including score and grid layout.
+        /// </summary>
         public void RestartLevel()
         {
-            restartSFXClip.Play();
+            restartSFXClip.PlayOneShot();
             levelCounterUI.SetProgressBar(0);
             turnCount = 0;
             gameTracker.RevertToLevelStart();

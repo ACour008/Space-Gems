@@ -10,6 +10,13 @@ namespace MiiskoWiiyaas.Builders
         private int rows, cols, colorOffset;
         private IBuilder<Gem, GemCell> gemBuilder;
 
+        /// <summary>
+        /// The Constructor for GemCellBuilder
+        /// </summary>
+        /// <param name="cellPrefab">The prefab for the cell of the game grid.</param>
+        /// <param name="cellItemPrefab">The prefab for what goes into the cell when it gets built.</param>
+        /// <param name="rows">The number of rows of the game grid.</param>
+        /// <param name="cols">The number of columns of the game grid.</param>
         public GemCellBuilder(GameObject cellPrefab, GameObject cellItemPrefab, int rows, int cols)
         {
             this.cellPrefab = cellPrefab;
@@ -19,9 +26,19 @@ namespace MiiskoWiiyaas.Builders
             this.colorOffset = 0;
         }
 
+        /// <summary>
+        /// Builds the components of a game grid cell object.
+        /// </summary>
+        /// <param name="id">The id of the cell.</param>
+        /// <param name="xPosition">The x coordinate of cell within the game grid.</param>
+        /// <param name="yPosition">The y coorindate of cell within the game grid.</param>
+        /// <param name="parent">The transform object of the game grid.</param>
+        /// <param name="cells">An array that represents the game grid.</param>
+        /// <returns>A GemCell object</returns>
         public GemCell Build(int id, float xPosition, float yPosition, Transform parent, GemCell[] cells)
         {
-            if (id % rows == 0) colorOffset++;
+            bool atLastCellofRow = id % rows == 0;
+            if (atLastCellofRow) colorOffset++;
 
             Vector3 position = new Vector3(xPosition, yPosition, 0);
             GameObject instance = GameObject.Instantiate<GameObject>(cellPrefab, position, Quaternion.identity, parent);
@@ -42,6 +59,16 @@ namespace MiiskoWiiyaas.Builders
             return gemCell;
         }
 
+        /// <summary>
+        /// Builds the components of a game grid cell object based on the layout of a GemColor array.
+        /// </summary>
+        /// <param name="id">The id of the cell.</param>
+        /// <param name="xPosition">The x coordinate of cell within the game grid.</param>
+        /// <param name="yPosition">The y coorindate of cell within the game grid.</param>
+        /// <param name="parent">The transform object of the game grid.</param>
+        /// <param name="cells">An array that represents the game grid.</param>
+        /// <param name="layout">An array that holds the grid layout data. </param>
+        /// <returns>A GemCell object with a specified color from the <c>layout</c> array. </returns>
         public GemCell BuildFromLayout(int id, float xPosition, float yPosition, Transform parent, GemCell[] cells, GemColor[] layout)
         {
 

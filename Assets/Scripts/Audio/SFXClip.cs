@@ -8,7 +8,11 @@ namespace MiiskoWiiyaas.Audio
     {
         [SerializeField] private EventReference soundClipReference;
 
-        public void Play()
+        /// <summary>
+        /// Plays the FMOD EventReference set in Unity's inspector, then releases
+        /// the instance from memory.
+        /// </summary>
+        public void PlayOneShot()
         {
             EventInstance soundInstance = RuntimeManager.CreateInstance(soundClipReference);
             soundInstance.start();

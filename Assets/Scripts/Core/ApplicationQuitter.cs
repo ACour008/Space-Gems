@@ -7,14 +7,8 @@ namespace MiiskoWiiyaas.Core
     {
         [SerializeField] ButtonHandler quitButton;
 
-        private void Start()
-        {
-            quitButton.OnClicked += QuitButton_OnClicked;
-        }
+        private void Start() => quitButton.OnClicked += QuitButton_OnClicked;
 
-        private void QuitButton_OnClicked(object sender, System.EventArgs e)
-        {
-            Application.Quit(0);
-        }
+        private void QuitButton_OnClicked(object sender, System.EventArgs e) => Application.Quit(0);
     }
 }

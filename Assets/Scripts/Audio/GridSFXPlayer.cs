@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using MiiskoWiiyaas.Core;
 using MiiskoWiiyaas.Core.Events;
-using FMOD.Studio;
 using FMODUnity;
+using FMOD.Studio;
 
 namespace MiiskoWiiyaas.Audio
 {
@@ -32,12 +32,15 @@ namespace MiiskoWiiyaas.Audio
             };
         }
 
+        #region Events
         public void GemCell_OnClicked(object sender, EventArgs eventArgs) => PlaySFXForCellSelect(sender);
         public void MatchFinder_OnPlayMatchSFX(object sender, SFXEventArgs eventArgs) => PlaySFXForMatches(eventArgs);
-
         public void GemMover_OnGemMoved(object sender, SFXEventArgs eventArgs) => PlaySFXForGemClink(eventArgs);
         public void GemMover_OnSwap(object sender, SFXEventArgs eventArgs) => PlaySFXForGemSwap(eventArgs);
         public void GridRetiler_OnGemMovedToPosition(object sender, SFXEventArgs eventArgs) => PlaySFXForGemClink(eventArgs);
+        #endregion
+
+        #region EventMethods
 
         private IEnumerator PlaySFX(EventInstance sfxInstance, float delayInSeconds)
         {
@@ -76,5 +79,6 @@ namespace MiiskoWiiyaas.Audio
 
             StartCoroutine(PlaySFX(sfxInstance, 0f));
         }
+        #endregion
     }
 }

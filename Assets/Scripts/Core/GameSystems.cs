@@ -9,9 +9,6 @@ namespace MiiskoWiiyaas.Core
     [System.Serializable]
     public class GameSystems
     {
-        public static GameSystems Empty = null;
-
-
         [SerializeField] private GemCellUISelector uiSelector;
         [SerializeField] private GemMover gemMover;
         [SerializeField] private MatchFinder matchFinder;
@@ -31,14 +28,20 @@ namespace MiiskoWiiyaas.Core
         public InputHandler InputHandler { get => inputHandler; }
         public GridSFXPlayer SFXPlayer { get => sfxPlayer; }
 
-        public void Initialize(GameGrid<GemCell> grid, GameObject gridItemPrefab)
+        /// <summary>
+        /// Sets up the game grid, initializes all systems associated with the grid
+        /// and registers all grid events.
+        /// </summary>
+        /// <param name="grid">The main game grid that holds all the gems.</param>
+        /// <param name="gridCellPrefab">The prefab for game grid cells.</param>
+        public void Initialize(GameGrid<GemCell> grid, GameObject gridCellPrefab)
         {
             this.grid = grid;
-            InitializeAllSystems(this.grid, gridItemPrefab);
+            InitializeAllSystems(this.grid, gridCellPrefab);
             RegisterEvents();
         }
 
-        public void InitializeAllSystems(GameGrid<GemCell> grid, GameObject gridItemPrefab)
+        private void InitializeAllSystems(GameGrid<GemCell> grid, GameObject gridItemPrefab)
         {
             matchFinder.Initialize(grid);
             matchChecker.Initialize(grid);
@@ -52,7 +55,7 @@ namespace MiiskoWiiyaas.Core
             levelManager.Initialize(grid, gridClearer, gridRetiler, gameTracker);
         }
 
-        public void RegisterEvents()
+        private void RegisterEvents()
         {
             matchFinder.OnMatchMade += gemMover.MatchFinder_OnMatchMade;
             matchFinder.OnMatchMade += scoreManager.MatchFinder_OnMatchMade;

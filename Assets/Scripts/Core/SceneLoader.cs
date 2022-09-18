@@ -16,11 +16,18 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene(index);
     }
 
+    /// <summary>
+    /// Loads the scene of the given build index.
+    /// </summary>
+    /// <param name="index">The build index of the scene to load.</param>
     public void LoadSceneIndex(int index)
     {
         StartCoroutine(LoadScene(index));
     }
 
+    /// <summary>
+    /// Loads the scene of the next build index.
+    /// </summary>
     public void LoadNextScene()
     {
         StartCoroutine(LoadScene(SceneManager.GetActiveScene().buildIndex + 1));
