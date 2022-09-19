@@ -21,7 +21,7 @@ namespace MiiskoWiiyaas.Scoring
 
         private int chainCount;
         private int multiMatchCount;
-        private int timesCalled;
+        private int matchesMadePerTurn;
 
         private GameGrid<GemCell> grid;
 
@@ -53,6 +53,10 @@ namespace MiiskoWiiyaas.Scoring
             return totalScore;
         }
 
+        /// <summary>
+        /// Sets up the Score Manager
+        /// </summary>
+        /// <param name="grid">The main game grid.</param>
         public void Initialize(GameGrid<GemCell> grid)
         {
             this.grid = grid;
@@ -65,13 +69,25 @@ namespace MiiskoWiiyaas.Scoring
             OnBonus += bonusUIAnimator.ScoreManager_OnBonus;
         }
 
+        /// <summary>
+        /// Resets the chain and multi-match bonus counts after the matchfinding
+        /// process is complete.
+        /// </summary>
+        /// <param name="sender">The InputHandler object that invoked the event.</param>
+        /// <param name="eventArgs">An empty System.EventArgs object.</param>
         public void InputHandler_OnMatchFindingDone(object sender, EventArgs eventArgs)
         {
             chainCount = 0;
             multiMatchCount = 0;
-            timesCalled = 0;
+            matchesMadePerTurn = 0;
         }
 
+        /// <summary>
+        /// Updates the score to zero if the user decides to restart the game.
+        /// </summary>
+        /// <param name="sender">The LevelManager object that invoked the event.</param>
+        /// <param name="eventArgs">An EventArgs subclass that holds the data as to whether
+        /// the game has restarted or is starting for the first time.</param>
         public void LevelManager_OnChangedToFirstLevel(object sender, LevelManagerEventArgs eventArgs)
         {
             if (eventArgs.isALevelRestart)
@@ -81,9 +97,14 @@ namespace MiiskoWiiyaas.Scoring
             }
         }
 
+        /// <summary>
+        /// Calculates the score with chain and multi-match bonuses when an match is found.
+        /// </summary>
+        /// <param name="sender">The MatchFinder object that invoked the event.</param>
+        /// <param name="eventArgs"></param>
         public void MatchFinder_OnMatchMade(object sender, MatchEventArgs eventArgs)
         {
-            if (timesCalled > 0) multiMatchCount++;
+            if (matchesMadePerTurn > 0) multiMatchCount++;
 
             float score = CalculateScore(eventArgs);
             currentScore += score;
@@ -91,13 +112,18 @@ namespace MiiskoWiiyaas.Scoring
             scoreUI.text = currentScore.ToString();
             UpdateScoreAnimatorText(eventArgs, score);
 
-            timesCalled++;
+            matchesMadePerTurn++;
         }
 
-        public void MatchFinder_OnSequenceDone(object sender, EventArgs eventArgs)
+        /// <summary>
+        /// Increments the chain bonus count after a match has been found.
+        /// </summary>
+        /// <param name="sender">The MatchFinder object that invoked the event.</param>
+        /// <param name="eventArgs">An empty EventArgs object.</param>
+        public void MatchFinder_OnMatchFound(object sender, EventArgs eventArgs)
         {
             chainCount++;
-            timesCalled = 0;
+            matchesMadePerTurn = 0;
         }
 
         private void UpdateScore(float newScore)
@@ -106,6 +132,7 @@ namespace MiiskoWiiyaas.Scoring
             scoreUI.text = currentScore.ToString();
         }
 
+        // TODO: Ensure that each generated text do not overlap.
         private void UpdateScoreAnimatorText(MatchEventArgs eventArgs, float scoreValue)
         {
             float x = (eventArgs.scoreCell.ID % grid.Rows) + grid.StartingPosition.x;

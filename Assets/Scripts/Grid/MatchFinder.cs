@@ -22,8 +22,8 @@ namespace MiiskoWiiyaas.Core
 
         public bool HasPotentialMatches { get => true; }
 
-        public event EventHandler<MatchEventArgs> OnMatchMade;
-        public event EventHandler OnSequenceDone;
+        public event EventHandler<MatchEventArgs> OnMatchProcessed;
+        public event EventHandler OnMatchFound;
         public event EventHandler<SFXEventArgs> OnPlayMatchSFX;
 
         private void AddNextCellsToResults(int index, bool searchCols, GemCell currentCell, List<Gem> results)
@@ -69,19 +69,7 @@ namespace MiiskoWiiyaas.Core
                 ProcessMatchList(colMatches, selected, firstSearch);
             }
 
-            bool matchesFound = matches.Count > 0;
-            if (matchesFound)
-            {
-                OnPlayMatchSFX?.Invoke(this, new SFXEventArgs { matchCount = this.numMatchesInCurrentTurn, sfxType = this.sfxType });
-                OnSequenceDone?.Invoke(this, EventArgs.Empty);
-                numMatchesInCurrentTurn = (numMatchesInCurrentTurn + 1) % 6;
-            } 
-            else
-            {
-                numMatchesInCurrentTurn = 1;
-            }
-
-            return matchesFound;
+            return IsMatchFound();
         }
 
         private List<Gem> FindColMatches(GemCell currentCell, int index)
@@ -120,6 +108,23 @@ namespace MiiskoWiiyaas.Core
             matches = new HashSet<Gem>();
         }
 
+        private bool IsMatchFound()
+        {
+            bool matchesFound = matches.Count > 0;
+            if (matchesFound)
+            {
+                OnPlayMatchSFX?.Invoke(this, new SFXEventArgs { matchCount = this.numMatchesInCurrentTurn, sfxType = this.sfxType });
+                OnMatchFound?.Invoke(this, EventArgs.Empty);
+                numMatchesInCurrentTurn = (numMatchesInCurrentTurn + 1) % 6;
+            }
+            else
+            {
+                numMatchesInCurrentTurn = 1;
+            }
+
+            return matchesFound;
+        }
+
         private void ProcessMatchList(List<Gem> matchList, GemCell[] selected, bool firstSearch)
         {
             bool matchExists = matchList.Count >= 3;
@@ -131,7 +136,7 @@ namespace MiiskoWiiyaas.Core
                 matches.UnionWith(matchList);
                 int powerUpLocation = (MatchContains(matchList, selected[1])) ? selected[1].ID : selected[0].ID;
 
-                OnMatchMade?.Invoke(this, new MatchEventArgs()
+                OnMatchProcessed?.Invoke(this, new MatchEventArgs()
                 {
                     matches = matchList,
                     scoreCell = grid.Cells[matchList[matchList.Count / 2].CurrentCellId],

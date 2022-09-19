@@ -14,9 +14,11 @@ public class InputHandler : MonoBehaviour
     private GemCellUISelector uiSelector;
     private bool matchFindingCompleted = false;
 
+    #region Events
     public event EventHandler OnMatchFindingDone;
     public event EventHandler OnTilesSelected;
     public event EventHandler OnTilesDeselected;
+    #endregion
 
     private void Awake() => selectedCells = new GemCell[2];
 
@@ -28,6 +30,17 @@ public class InputHandler : MonoBehaviour
         GemCell.Selected = null;
     }
 
+    private void EndGame()
+    {
+        gameOverUIToggler.OpenMenu();
+    }
+
+    /// <summary>
+    /// Handles GemCell clicks by either selecting or unselecting the cell on the first click.
+    /// On the second click, the swap and match-finding processes will begin if the cell is a neighbor.
+    /// </summary>
+    /// <param name="sender">The GemCell that invoked the event.</param>
+    /// <param name="eventArgs">An empty System.EventArgs object.</param>
     public void GemCell_OnClicked(object sender, EventArgs eventArgs)
     {
         GemCell clickedCell = sender as GemCell;
@@ -49,7 +62,7 @@ public class InputHandler : MonoBehaviour
 
             if (selectedCells[0].IsNeighborsWith(clickedCell))
             {
-                StartCoroutine(HandleInput(clickedCell));
+                StartCoroutine(StartMatchFinding(clickedCell));
             }
             else
             {
@@ -57,22 +70,26 @@ public class InputHandler : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Notifies the InputHandler that the matching finding process is complete
+    /// the game grid was retiled.
+    /// </summary>
+    /// <param name="sender">The GridRetiler object that invoked the event.</param>
+    /// <param name="eventArgs">An empty System.EventArgs object.</param>
     public void GridRetiler_OnGridRetiled(object sender, EventArgs eventArgs) => matchFindingCompleted = true;
 
-    public IEnumerator HandleInput(GemCell clickedCell)
+
+    private IEnumerator StartMatchFinding(GemCell clickedCell)
     {
+        OnTilesSelected?.Invoke(this, EventArgs.Empty);
         uiSelector.Deselect();
 
-        OnTilesSelected?.Invoke(this, EventArgs.Empty);
-
         selectedCells[1] = clickedCell;
-
         gemMover.Swap(selectedCells[0], selectedCells[1]);
+
         yield return new WaitUntil(() => gemMover.IsFinishedMoving);
 
         bool matchFound = matchFinder.FindAllMatches(selectedCells, true);
-
         if (matchFound)
         {
             do
@@ -84,12 +101,11 @@ public class InputHandler : MonoBehaviour
 
             if (!matchChecker.PotentialMatchesExist)
             {
-                gameOverUIToggler.OpenMenu();
+                EndGame();
             }
             else
             {
-                OnMatchFindingDone?.Invoke(this, EventArgs.Empty);
-                OnTilesDeselected?.Invoke(this, EventArgs.Empty);
+                InvokeEndOfTurnEvents();
             }
         }
         else
@@ -100,6 +116,19 @@ public class InputHandler : MonoBehaviour
         ClearSelectedCells();
     }
 
+    private void InvokeEndOfTurnEvents()
+    {
+        OnMatchFindingDone?.Invoke(this, EventArgs.Empty);
+        OnTilesDeselected?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Sets up the InputHandler
+    /// </summary>
+    /// <param name="matchFinder">The object that searches for matches of 3 or more. Not to be confused with MatchChecker.</param>
+    /// <param name="matchChecker">The object that checks for potential matches without triggering move animations.</param>
+    /// <param name="gemMover">The object responsible for moving Gems to specified targets</param>
+    /// <param name="uiSelector">The object that handles the UI when grid cells are clicked.</param>
     public void Initialize(MatchFinder matchFinder, MatchChecker matchChecker, GemMover gemMover, GemCellUISelector uiSelector)
     {
         this.matchFinder = matchFinder;

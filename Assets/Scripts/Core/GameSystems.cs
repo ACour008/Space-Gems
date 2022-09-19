@@ -57,10 +57,10 @@ namespace MiiskoWiiyaas.Core
 
         private void RegisterEvents()
         {
-            matchFinder.OnMatchMade += gemMover.MatchFinder_OnMatchMade;
-            matchFinder.OnMatchMade += scoreManager.MatchFinder_OnMatchMade;
+            matchFinder.OnMatchProcessed += gemMover.MatchFinder_OnMatchMade;
+            matchFinder.OnMatchProcessed += scoreManager.MatchFinder_OnMatchMade;
             matchFinder.OnPlayMatchSFX += sfxPlayer.MatchFinder_OnPlayMatchSFX;
-            matchFinder.OnSequenceDone += scoreManager.MatchFinder_OnSequenceDone;
+            matchFinder.OnMatchFound += scoreManager.MatchFinder_OnSequenceDone;
 
             gemMover.OnSwap += sfxPlayer.GemMover_OnSwap;
             gemMover.OnGemMoved += sfxPlayer.GemMover_OnGemMoved;

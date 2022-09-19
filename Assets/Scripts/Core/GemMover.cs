@@ -68,7 +68,7 @@ namespace MiiskoWiiyaas.Core
         /// <param name="sender">The MatchFinder object that invoked the event.</param>
         /// <param name="eventArgs">The EventArgs containing the data needed to determine if a power Gem is needed.</param>
         /// <seealso cref="MatchFinder"/>
-        public void MatchFinder_OnMatchMade(object sender, MatchEventArgs eventArgs)
+        public void MatchFinder_OnMatchProcessed(object sender, MatchEventArgs eventArgs)
         {
             swapState = 0;
 
