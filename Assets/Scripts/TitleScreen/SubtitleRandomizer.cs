@@ -3,7 +3,9 @@ using TMPro;
 
 namespace MiiskoWiiyaas.UI
 {
-
+    /// <summary>
+    /// Randomizes the subtitle on the Title Screen
+    /// </summary>
     public class SubtitleRandomizer : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI textBox;
