@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{68a93fbe-180c-42f9-98a5-42ac979a83b7}">
+		<property name="assetPath">
+			<value>2_Leaves.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>198.26938775510203</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{3aed6e76-45ab-4eed-a2de-bd8afeac922a}</destination>
+		</relationship>
+	</object>
+</objects>

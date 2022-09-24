@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="MixerGroup" id="{2f80af1c-c3cc-4ddd-9141-cd0fc3170d60}">
+		<property name="volume">
+			<value>2.5</value>
+		</property>
+		<property name="name">
+			<value>Power Gem Explosion</value>
+		</property>
+		<relationship name="masters">
+			<destination>{cd6f792a-0e97-4c52-b580-5491baa95e19}</destination>
+		</relationship>
+		<relationship name="effectChain">
+			<destination>{de4ae95f-b241-438f-9283-324ba302a1e1}</destination>
+		</relationship>
+		<relationship name="panner">
+			<destination>{72704cf1-4818-4c14-8b0d-f89d74413bf3}</destination>
+		</relationship>
+		<relationship name="output">
+			<destination>{907fe7e9-16a0-492b-803a-6d110287e330}</destination>
+		</relationship>
+	</object>
+	<object class="MixerBusEffectChain" id="{de4ae95f-b241-438f-9283-324ba302a1e1}">
+		<relationship name="effects">
+			<destination>{430c0280-0f06-4e08-827c-5bf75c411830}</destination>
+		</relationship>
+	</object>
+	<object class="MixerBusPanner" id="{72704cf1-4818-4c14-8b0d-f89d74413bf3}" />
+	<object class="MixerBusFader" id="{430c0280-0f06-4e08-827c-5bf75c411830}" />
+</objects>

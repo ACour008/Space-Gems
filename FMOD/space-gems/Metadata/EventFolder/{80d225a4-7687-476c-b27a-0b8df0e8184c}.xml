@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="EventFolder" id="{80d225a4-7687-476c-b27a-0b8df0e8184c}">
+		<property name="name">
+			<value>PowerGem</value>
+		</property>
+		<relationship name="folder">
+			<destination>{7bc161f2-737a-41c3-83f2-793639b96c15}</destination>
+		</relationship>
+	</object>
+</objects>
