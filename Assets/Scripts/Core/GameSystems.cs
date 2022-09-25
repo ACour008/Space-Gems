@@ -50,7 +50,7 @@ namespace MiiskoWiiyaas.Core
             gemMover.Initialize(grid, gridRetiler);
             gridClearer.Initialize(grid);
             scoreManager.Initialize(grid);
-            inputHandler.Initialize(matchFinder, matchChecker, gemMover, uiSelector);
+            inputHandler.Initialize(matchFinder, matchChecker, gemMover, uiSelector); // could probabl detach uiSelector from inputHandler as uiHandler now has On(De)Selected events.
             shuffler.Initialize(grid, matchChecker);
             gameTracker.Initialize(grid, gridRetiler, gridClearer, scoreManager);
             levelManager.Initialize(grid, gridClearer, gridRetiler, gameTracker);

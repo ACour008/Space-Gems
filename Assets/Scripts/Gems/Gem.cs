@@ -17,7 +17,7 @@ namespace MiiskoWiiyaas.Core
         protected GemAnimator gemAnimator;
         protected SpriteRenderer spriteRenderer;
 
-        public bool AnimationCompleted { get => gemAnimator.Completed; }
+        public bool IsCompletedAnimation { get => gemAnimator.Completed; }
         public int CurrentCellId { get => currentCellId; set => currentCellId = value; }
         public GemType Type { get => type; }
         public GemColor Color { get => color; }

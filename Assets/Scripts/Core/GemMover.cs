@@ -45,7 +45,7 @@ namespace MiiskoWiiyaas.Core
 
             switcher.ExchangeGems(cell1, cell2);
 
-            yield return new WaitUntil(() => cell1.CurrentGem.AnimationCompleted && cell2.CurrentGem.AnimationCompleted);
+            yield return new WaitUntil(() => cell1.CurrentGem.IsCompletedAnimation && cell2.CurrentGem.IsCompletedAnimation);
             animationCompleted = true;
 
             swapState = (swapState + 1) % 2;

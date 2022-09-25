@@ -426,8 +426,8 @@ MonoBehaviour:
   SwitchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: FMOD/space-gems/space-gems.fspro
-  sourceBankPath: FMOD/space-gems/Build
+  sourceProjectPath: ../../Space Gems v2/FMOD/space-gems/space-gems.fspro
+  sourceBankPath: ../../Space Gems v2/FMOD/space-gems/Build
   SourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 0

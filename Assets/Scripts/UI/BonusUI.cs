@@ -32,7 +32,6 @@ namespace MiiskoWiiyaas.UI
             EffectData<Vector3> moveData = new EffectData<Vector3>(targetPosition, durationInSeconds: 1, startDelayInSeconds: delay);
             EffectData<float> fadeData = new EffectData<float>(endValue:0, durationInSeconds: 0.5f, startDelayInSeconds: delay + 0.5f);
 
-            effectBuilder.ClearAllEffects();
             effectBuilder
                 .AddEffect(new Move(transform, moveData))
                 .AddEffect(new Fade(canvasGroup, fadeData))
