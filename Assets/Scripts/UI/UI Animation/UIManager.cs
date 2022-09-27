@@ -23,14 +23,19 @@ public class UIManager : MonoBehaviour
 
     public void ScoreManager_OnBonus(object sender, BonusEventArgs eventArgs)
     {
-        bonusUIAnimators[eventArgs.bonusType].StartUIAnimation(eventArgs.score, chainBonusAnimator.gameObject.transform);
+        UIAnimatedComponent uiComponent = bonusUIAnimators[eventArgs.bonusType].GetUIAnimatedComponent();
+        string scoreValue = eventArgs.score.ToString();
+
+        uiComponent.Run(chainBonusAnimator.transform, scoreValue);
     }
 
     public void MatchFinder_OnMatchProcessed(object sender, MatchEventArgs eventArgs)
     {
-        int scoreValue = eventArgs.matches[0].Value * eventArgs.matches.Count;
+        string scoreValue = (eventArgs.matches[0].Value * eventArgs.matches.Count).ToString();
         Transform parent = eventArgs.scoreCell.transform;
-        cellScoreAnimator.StartUIAnimation(scoreValue, parent);
+        UIAnimatedComponent uiComponent = cellScoreAnimator.GetUIAnimatedComponent();
+
+        uiComponent.Run(parent, scoreValue);
     }
 
 

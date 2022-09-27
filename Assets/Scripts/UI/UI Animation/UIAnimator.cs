@@ -10,60 +10,38 @@ public class UIAnimator : MonoBehaviour
     [SerializeField] private Transform parent;
     [SerializeField] private int defaultPoolSize;
     [SerializeField] private int maxPoolSize;
-    [SerializeField] private UIAnimationProperties effectProperties;
-
-    private int getCount = 0;
+    [SerializeField] private UIAnimationProperties effectProperties; // this is prob redundant too? Maybe.
 
     private ObjectPool<UIAnimatedComponent> pool;
 
-    // Own class?
-    private EffectBuilder BuildEffect(UIAnimatedComponent uiObject)
-    {
-        MonoBehaviour owner = uiObject.GetComponent<MonoBehaviour>();
-        RectTransform canvasRT = uiObject.GetComponent<RectTransform>();
-        CanvasGroup canvasGroup = uiObject.GetComponent<CanvasGroup>();
-
-        Vector3 moveTarget = effectProperties.startPosition + effectProperties.movePositionBy;
-        float floatTarget = effectProperties.endColor.a;
-
-        EffectData<Vector3> moveData = new EffectData<Vector3>(moveTarget, effectProperties.durationInSeconds, effectProperties.startDelayInSeconds);
-        EffectData<float> fadeData = new EffectData<float>(floatTarget, effectProperties.durationInSeconds, effectProperties.startDelayInSeconds);
-      
-        EffectBuilder eb = new EffectBuilder(owner);
-
-        eb.AddEffect(new Move(canvasRT, moveData))
-            .AddEffect(new Fade(canvasGroup, fadeData));
-
-        return eb;
-    }
-
     private void Awake()
     {
-        pool = new ObjectPool<UIAnimatedComponent>(CreateUIObject, collectionCheck: true, defaultCapacity: defaultPoolSize, maxSize: maxPoolSize);
+        pool = new ObjectPool<UIAnimatedComponent>(CreateUIComponent, OnGetUIComponent, OnReleaseUIComponent, 
+            collectionCheck: true, defaultCapacity: defaultPoolSize, maxSize: maxPoolSize);
     }
 
-    private UIAnimatedComponent CreateUIObject()
+    private UIAnimatedComponent CreateUIComponent()
     {
-        Debug.Log("Creating UI Animated Component");
-
         UIAnimatedComponent uiComponent = Instantiate<UIAnimatedComponent>(prefab, parent, false);
-        EffectBuilder effectBuilder = BuildEffect(uiComponent);
 
         uiComponent.GetComponent<UIAnimatedComponent>()
-            .Initialize(effectBuilder, this.pool, parent);
+            .Initialize(this.pool, effectProperties);
 
         return uiComponent;
     }
 
-    public void StartUIAnimation(int scoreValue, Transform newParent = null)
+    public UIAnimatedComponent GetUIAnimatedComponent()
     {
-        UIAnimatedComponent uiComponent = pool.Get();
+        return pool.Get();
+    }
 
-        if (newParent != null)
-        {
-            uiComponent.transform.SetParent(newParent, false);
-        }
-        
-        uiComponent.Run(effectProperties.startPosition, effectProperties.startColor, scoreValue.ToString());
+    public void OnGetUIComponent(UIAnimatedComponent uiComponent)
+    {
+        uiComponent.gameObject.SetActive(true);
+    }
+    public void OnReleaseUIComponent(UIAnimatedComponent uiComponent)
+    {
+        uiComponent.SetParent(transform);
+        uiComponent.gameObject.SetActive(false);
     }
 }

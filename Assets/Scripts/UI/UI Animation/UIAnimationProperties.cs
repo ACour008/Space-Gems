@@ -8,7 +8,7 @@ public class UIAnimationProperties : ScriptableObject
     public Color startColor;
     public Color endColor;
     public Vector3 startPosition;
-    public Vector3 movePositionBy;
+    public Vector3 endPosition;
     public float durationInSeconds;
     public float startDelayInSeconds;
 }
