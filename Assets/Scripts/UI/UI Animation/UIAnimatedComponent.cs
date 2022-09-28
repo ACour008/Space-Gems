@@ -3,40 +3,25 @@ using UnityEngine.Pool;
 using TMPro;
 using Tweens;
 
-// LETS CREATE 2 INTERFACES: IUIAnimatedComponent & IEffectGenerator
-// IUIAnimatedComponent: Initialize, Run & SetParent.
-// IEffectGenerator: GenerateEffects (maybe a part of Tween Daddy??)
-
-public class UIAnimatedComponent : MonoBehaviour
+public abstract class UIAnimatedComponent : MonoBehaviour, IUIAnimatedComponent, IEffectGenerator
 {
-    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] protected TextMeshProUGUI scoreText;
 
     private EffectBuilder effectBuilder;
-    private ObjectPool<UIAnimatedComponent> pool;
+    private ObjectPool<IUIAnimatedComponent> pool;
     private UIAnimationProperties properties;
-    private RectTransform canvasRT;
-    private RectTransform scoreTextRT;
+    protected RectTransform canvasRT;
+    protected RectTransform scoreTextRT;
+    protected CanvasGroup canvasGroup;
 
-    public TextMeshProUGUI ScoreText { get => scoreText; }
+    public GameObject GameObject { get => gameObject; }
 
-    private void Awake()
+    #region Unity Messages
+    void Awake()
     {
         canvasRT = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
         scoreTextRT = scoreText.GetComponent<RectTransform>();
-    }
-
-    private void EffectBuilder_OnExecutionCompleted(object sender, System.EventArgs e)
-    {
-        this.pool.Release(this);
-    }
-
-    public void Initialize(ObjectPool<UIAnimatedComponent> pool, UIAnimationProperties properties)
-    {
-        this.effectBuilder = new EffectBuilder(this);
-        this.pool = pool;
-        this.properties = properties;
-
-        effectBuilder.OnExecutionCompleted += EffectBuilder_OnExecutionCompleted;
     }
 
     private void OnDestroy()
@@ -44,25 +29,43 @@ public class UIAnimatedComponent : MonoBehaviour
         effectBuilder.OnExecutionCompleted -= EffectBuilder_OnExecutionCompleted;
     }
 
+    #endregion
+
+    #region Effect Builder Messages
+    private void EffectBuilder_OnExecutionCompleted(object sender, System.EventArgs e)
+    {
+        this.pool.Release(this);
+    }
+    #endregion
+
+    #region IUIAnimatedComponent implementation
+    public void Initialize(ObjectPool<IUIAnimatedComponent> objectPool, UIAnimationProperties properties)
+    {
+        effectBuilder = new EffectBuilder(this);
+        pool = objectPool;
+        this.properties = properties;
+
+        effectBuilder.OnExecutionCompleted += EffectBuilder_OnExecutionCompleted;
+    }
+
+    public void ReturnTo(Transform otherParent)
+    {
+        canvasRT.SetParent(otherParent, false);
+    }
+
     public void Run(Transform parent, string uiText)
     {
-        SetupObject(parent, uiText); // could we do this at the onGet
-        effectBuilder.AddEffects(GenerateEffects()).ExecuteAll();
+        SetupObject(parent, uiText);
+        Effect[] effects = GenerateEffects(properties);
+        effectBuilder.AddEffects(effects).ExecuteAll();
     }
+    #endregion
 
-    private Effect[] GenerateEffects()
-    {
-        // REDUNDANT. REMOVE FROM TWEEN-DADDY
-        EffectData<Vector3> moveData = new EffectData<Vector3>(properties.endPosition, properties.durationInSeconds, properties.startDelayInSeconds);
-        EffectData<float> fadeData = new EffectData<float>(properties.endColor.a, properties.durationInSeconds, properties.startDelayInSeconds);
+    #region Effect Generation
+    public abstract Effect[] GenerateEffects(UIAnimationProperties properties);
+    #endregion
 
-        return new Effect[2]
-        {
-            new Move(scoreTextRT, moveData),
-            new Fade(scoreText, fadeData)
-        };
-    }
-
+    #region Helpers
     private void SetupObject(Transform parent, string uiText)
     {
         canvasRT.SetParent(parent, false);
@@ -71,9 +74,5 @@ public class UIAnimatedComponent : MonoBehaviour
         scoreText.text = uiText;
         scoreText.color = properties.startColor;
     }
-
-    public void SetParent(Transform parent)
-    {
-        canvasRT.SetParent(parent, false);
-    }
+    #endregion
 }

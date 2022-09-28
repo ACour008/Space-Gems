@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
 
     public void ScoreManager_OnBonus(object sender, BonusEventArgs eventArgs)
     {
-        UIAnimatedComponent uiComponent = bonusUIAnimators[eventArgs.bonusType].GetUIAnimatedComponent();
+        IUIAnimatedComponent uiComponent = bonusUIAnimators[eventArgs.bonusType].GetUIAnimatedComponent();
         string scoreValue = eventArgs.score.ToString();
 
         uiComponent.Run(chainBonusAnimator.transform, scoreValue);
@@ -33,7 +33,7 @@ public class UIManager : MonoBehaviour
     {
         string scoreValue = (eventArgs.matches[0].Value * eventArgs.matches.Count).ToString();
         Transform parent = eventArgs.scoreCell.transform;
-        UIAnimatedComponent uiComponent = cellScoreAnimator.GetUIAnimatedComponent();
+        IUIAnimatedComponent uiComponent = cellScoreAnimator.GetUIAnimatedComponent();
 
         uiComponent.Run(parent, scoreValue);
     }

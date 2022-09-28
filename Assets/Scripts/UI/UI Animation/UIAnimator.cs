@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.Pool;
-using Tweens;
 
-// Could remove MonoBehaviour, and inject prefab, poolSizes and properties from the BonusUIManager
-// but lets leave as is for now.
+/* THIS SHOULD PROBABLY BE RENAMED.
+ * HERE A FEW OPTIONS:
+ *   - UIAnimatedObjectPooler
+ *   - uh..
+*/
+
 public class UIAnimator : MonoBehaviour
 {
     [SerializeField] private UIAnimatedComponent prefab;
@@ -12,11 +15,11 @@ public class UIAnimator : MonoBehaviour
     [SerializeField] private int maxPoolSize;
     [SerializeField] private UIAnimationProperties effectProperties; // this is prob redundant too? Maybe.
 
-    private ObjectPool<UIAnimatedComponent> pool;
+    private ObjectPool<IUIAnimatedComponent> pool;
 
     private void Awake()
     {
-        pool = new ObjectPool<UIAnimatedComponent>(CreateUIComponent, OnGetUIComponent, OnReleaseUIComponent, 
+        pool = new ObjectPool<IUIAnimatedComponent>(CreateUIComponent, OnGetUIComponent, OnReleaseUIComponent, 
             collectionCheck: true, defaultCapacity: defaultPoolSize, maxSize: maxPoolSize);
     }
 
@@ -30,18 +33,18 @@ public class UIAnimator : MonoBehaviour
         return uiComponent;
     }
 
-    public UIAnimatedComponent GetUIAnimatedComponent()
+    public IUIAnimatedComponent GetUIAnimatedComponent()
     {
         return pool.Get();
     }
 
-    public void OnGetUIComponent(UIAnimatedComponent uiComponent)
+    public void OnGetUIComponent(IUIAnimatedComponent uiComponent)
     {
-        uiComponent.gameObject.SetActive(true);
+        uiComponent.GameObject.SetActive(true);
     }
-    public void OnReleaseUIComponent(UIAnimatedComponent uiComponent)
+    public void OnReleaseUIComponent(IUIAnimatedComponent uiComponent)
     {
-        uiComponent.SetParent(transform);
-        uiComponent.gameObject.SetActive(false);
+        uiComponent.ReturnTo(transform);
+        uiComponent.GameObject.SetActive(false);
     }
 }

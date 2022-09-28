@@ -61,11 +61,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7707571588647886907}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed29223fa17254b659cdf29d628d6481, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ebc14d64632e964294209c3f7e4daf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 5157615993773139427}
-  rectTransform: {fileID: 4429346314422255917}
 --- !u!1 &7714353156513300335
 GameObject:
   m_ObjectHideFlags: 0
